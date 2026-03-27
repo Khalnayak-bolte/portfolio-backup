@@ -1,22 +1,23 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { initializeFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAxpHTIwCBTRUB_eOJaKMF-8vPguTSTKs8",
-  authDomain: "yash-rajbhar.firebaseapp.com",
-  projectId: "yash-rajbhar",
-  storageBucket: "yash-rajbhar.firebasestorage.app",
-  messagingSenderId: "519693640058",
-  appId: "1:519693640058:web:506ddeb04fadf3e2fff6c3",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Primary app — used for admin session
 const app = initializeApp(firebaseConfig);
-
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+export const db = getFirestore(app);
 
-/* 🔥 FORCE FIRESTORE LONG POLLING */
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-});
+// Secondary app — used ONLY for creating crewmate accounts
+// This prevents signing out the admin when a new user is created
+const secondaryApp = initializeApp(firebaseConfig, "secondary");
+export const secondaryAuth = getAuth(secondaryApp);

@@ -1,46 +1,36 @@
 import { useEffect, useRef } from "react";
 import { useMotionValue, useSpring } from "framer-motion";
 
-const useMagnetic = (strength = 0.35) => {
-  const ref = useRef(null);
-
+const useMouseParallax = (divisor = 80) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const smoothX = useSpring(x, { stiffness: 300, damping: 20 });
-  const smoothY = useSpring(y, { stiffness: 300, damping: 20 });
+  const smoothX = useSpring(x, { stiffness: 60, damping: 20, mass: 0.8 });
+  const smoothY = useSpring(y, { stiffness: 60, damping: 20, mass: 0.8 });
+
+  const rafRef = useRef(null);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
     const handleMouseMove = (e) => {
-      const rect = el.getBoundingClientRect();
-
-      const offsetX =
-        (e.clientX - rect.left - rect.width / 2) * strength;
-      const offsetY =
-        (e.clientY - rect.top - rect.height / 2) * strength;
-
-      x.set(offsetX);
-      y.set(offsetY);
+      /* Throttle via requestAnimationFrame — fires max once per frame */
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        x.set((e.clientX - cx) / divisor);
+        y.set((e.clientY - cy) / divisor);
+        rafRef.current = null;
+      });
     };
 
-    const reset = () => {
-      x.set(0);
-      y.set(0);
-    };
-
-    el.addEventListener("mousemove", handleMouseMove);
-    el.addEventListener("mouseleave", reset);
-
+    window.addEventListener("mousemove", handleMouseMove);
     return () => {
-      el.removeEventListener("mousemove", handleMouseMove);
-      el.removeEventListener("mouseleave", reset);
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [strength, x, y]);
+  }, [divisor, x, y]);
 
-  return { ref, x: smoothX, y: smoothY };
+  return { x: smoothX, y: smoothY };
 };
 
-export default useMagnetic;
+export default useMouseParallax;

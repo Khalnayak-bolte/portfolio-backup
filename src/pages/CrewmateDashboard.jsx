@@ -10,8 +10,6 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import TiltCard from "../components/effects/TiltCard";
-import CardFX from "../components/CardFX";
 
 const CrewmateDashboard = () => {
   const navigate = useNavigate();
@@ -28,7 +26,7 @@ const CrewmateDashboard = () => {
     }
 
     const data = JSON.parse(stored);
-    setUsername(data.username);
+    setUsername(data.email); // ✅ login saves email, not username
   }, [navigate]);
 
   /* 🔴 REAL-TIME ASSIGNED PROJECTS (USERNAME BASED) */
@@ -103,61 +101,34 @@ const CrewmateDashboard = () => {
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
             {projects.map((p) => (
-              <TiltCard key={p.id}>
-                <CardFX>
-                  <div className="p-6 space-y-3">
-                    <h3 className="font-semibold text-lg">
-                      {p.serviceType || "Project"}
-                    </h3>
-
-                    <p className="text-sm text-gray-300">
-                      {p.description}
-                    </p>
-
-                    {p.adminComment && (
-                      <p className="text-sm text-indigo-400">
-                        📝 Admin: {p.adminComment}
-                      </p>
-                    )}
-
-                    {/* STATUS BADGE */}
-                    <span
-                      className={`inline-block text-xs px-3 py-1 rounded-full ${
-                        p.status === "completed"
-                          ? "bg-green-600"
-                          : p.status === "in_progress"
-                          ? "bg-yellow-600"
-                          : "bg-indigo-600"
-                      }`}
-                    >
-                      {p.status}
-                    </span>
-
-                    {/* ACTIONS */}
-                    {p.status !== "completed" && (
-                      <div className="flex gap-2 mt-3">
-                        <button
-                          onClick={() =>
-                            updateStatus(p.id, "in_progress")
-                          }
-                          className="px-3 py-1 text-sm rounded bg-yellow-600 hover:bg-yellow-700"
-                        >
-                          In Progress
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            updateStatus(p.id, "completed")
-                          }
-                          className="px-3 py-1 text-sm rounded bg-green-600 hover:bg-green-700"
-                        >
-                          Completed
-                        </button>
-                      </div>
-                    )}
+              <div key={p.id} className="bg-gray-800 border border-gray-700 rounded-xl p-5 space-y-3">
+                <h3 className="font-semibold text-lg text-white">
+                  {p.serviceType || "Project"}
+                </h3>
+                <p className="text-sm text-gray-300">{p.description}</p>
+                {p.adminComment && (
+                  <p className="text-sm text-indigo-400">📝 Admin: {p.adminComment}</p>
+                )}
+                <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${
+                  p.status === "completed" ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                  : p.status === "in_progress" ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                  : "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                }`}>
+                  {p.status}
+                </span>
+                {p.status !== "completed" && (
+                  <div className="flex gap-2 pt-2 border-t border-gray-700">
+                    <button onClick={() => updateStatus(p.id, "in_progress")}
+                      className="px-3 py-1.5 text-xs rounded-lg bg-yellow-700 hover:bg-yellow-600 text-white transition">
+                      In Progress
+                    </button>
+                    <button onClick={() => updateStatus(p.id, "completed")}
+                      className="px-3 py-1.5 text-xs rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white transition">
+                      Completed
+                    </button>
                   </div>
-                </CardFX>
-              </TiltCard>
+                )}
+              </div>
             ))}
           </div>
         )}

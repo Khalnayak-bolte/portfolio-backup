@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Routes,
-  Route,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/firebase";
 
@@ -21,7 +16,6 @@ import CrewmateRoute from "./routes/CrewmateRoute";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import CustomCursor from "./components/CustomCursor";
 import StartProjectModal from "./components/StartProjectModal";
 import JoinCrewModal from "./components/JoinCrewModal";
 import AssignCrewModal from "./components/admin/AssignCrewModal";
@@ -30,24 +24,93 @@ import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Skills from "./sections/Skills";
 import Projects from "./sections/Projects";
+import GitHubStats from "./sections/GitHubStats";       // ✅ NEW
+import Certifications from "./sections/Certifications"; // ✅ NEW
+import NotFound from "./pages/NotFound";                // ✅ NEW
 import Contact from "./sections/Contact";
 import Testimonials from "./sections/Testimonials";
-import { sectionParallax } from "./animations/variants";
 
-/* PAGE TRANSITION */
+/* ── Page titles per route ── */
+const PAGE_TITLES = {
+  "/":              "Yash Rajbhar | Full-Stack Developer",
+  "/about":         "About | Yash Rajbhar",
+  "/projects":      "Projects | Yash Rajbhar",
+  "/admin-login":   "Admin Login | Yash Rajbhar",
+  "/admin":         "Admin Dashboard | Yash Rajbhar",
+  "/crewmate-login":"Crewmate Login | Yash Rajbhar",
+  "/crewmate":      "Crewmate Dashboard | Yash Rajbhar",
+};
+
+function usePageTitle() {
+  const location = useLocation();
+  useEffect(() => {
+    const title = PAGE_TITLES[location.pathname] || "Yash Rajbhar | Full-Stack Developer";
+    document.title = title;
+  }, [location.pathname]);
+}
+
+/* ── Scroll progress bar ── */
+function ScrollProgressBar() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
+
+  return (
+    <motion.div
+      style={{ scaleX, transformOrigin: "left" }}
+      className="fixed top-0 left-0 right-0 h-[3px] z-[99999]
+        bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+    />
+  );
+}
+
+/* ── Floating back to top button ── */
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.5, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.5, y: 20 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          whileHover={{ scale: 1.15, y: -3 }}
+          whileTap={{ scale: 0.9 }}
+          className="fixed bottom-8 right-6 z-50
+            w-11 h-11 rounded-full
+            bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500
+            text-white shadow-lg shadow-indigo-500/40
+            flex items-center justify-center text-lg
+            hover:shadow-xl hover:shadow-indigo-500/50 transition-shadow"
+          aria-label="Back to top"
+        >
+          ↑
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ── Page transition ── */
 const pageVariants = {
-  initial: { opacity: 0, y: 40, filter: "blur(8px)" },
+  initial: { opacity: 0, y: 24 },
   animate: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
   },
   exit: {
     opacity: 0,
-    y: -30,
-    filter: "blur(8px)",
-    transition: { duration: 0.45, ease: "easeInOut" },
+    y: -16,
+    transition: { duration: 0.3, ease: "easeInOut" },
   },
 };
 
@@ -69,42 +132,34 @@ function AnimatedRoutes({ user }) {
   }, [location, navigate]);
 
   return (
-    <AnimatePresence mode="sync">
+    <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+
+        {/* Home */}
         <Route
           path="/"
           element={
-            <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <motion.div variants={sectionParallax} initial="hidden" animate="visible">
-                <Hero />
-              </motion.div>
-
-              <motion.div variants={sectionParallax} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
-                <About />
-              </motion.div>
-
-              <motion.div variants={sectionParallax} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
-                <Skills />
-              </motion.div>
-
-              <motion.div variants={sectionParallax} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
-                <Projects />
-              </motion.div>
-
-              <motion.div variants={sectionParallax} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
-                <Testimonials user={user} />
-              </motion.div>
-
-              <motion.div variants={sectionParallax} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
-                <Contact />
-              </motion.div>
+            <motion.div
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <Hero />
+              <About />
+              <Skills />
+              <Projects />
+              <GitHubStats />       {/* ✅ NEW */}
+              <Certifications />    {/* ✅ NEW */}
+              <Testimonials />
+              <Contact />
             </motion.div>
           }
         />
 
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/projects" element={<AllProjects />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/about"          element={<AboutPage />} />
+        <Route path="/projects"       element={<AllProjects />} />
+        <Route path="/admin-login"    element={<AdminLogin />} />
 
         <Route
           path="/admin"
@@ -125,6 +180,9 @@ function AnimatedRoutes({ user }) {
             </CrewmateRoute>
           }
         />
+
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
   );
@@ -132,20 +190,19 @@ function AnimatedRoutes({ user }) {
 
 function App() {
   const location = useLocation();
+  usePageTitle();
 
   const isSystemRoute =
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/crewmate");
 
-  const [user, setUser] = useState(null);
-  const [dark, setDark] = useState(localStorage.getItem("theme") === "dark");
+  const [user, setUser]                         = useState(null);
+  const [dark, setDark]                         = useState(localStorage.getItem("theme") === "dark");
   const [projectModalOpen, setProjectModalOpen] = useState(false);
-  const [crewModalOpen, setCrewModalOpen] = useState(false);
+  const [crewModalOpen, setCrewModalOpen]       = useState(false);
 
-  // 🔑 SINGLE SOURCE OF AUTH TRUTH
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-      console.log("🔥 Auth state changed:", firebaseUser);
       setUser(firebaseUser);
     });
     return () => unsub();
@@ -163,28 +220,34 @@ function App() {
 
   useEffect(() => {
     const openProject = () => setProjectModalOpen(true);
-    const openCrew = () => setCrewModalOpen(true);
+    const openCrew    = () => setCrewModalOpen(true);
 
     window.addEventListener("open-project-modal", openProject);
-    window.addEventListener("open-crew-modal", openCrew);
+    window.addEventListener("open-crew-modal",    openCrew);
 
     return () => {
       window.removeEventListener("open-project-modal", openProject);
-      window.removeEventListener("open-crew-modal", openCrew);
+      window.removeEventListener("open-crew-modal",    openCrew);
     };
   }, []);
 
   return (
     <>
-      <CustomCursor />
+      {/* Scroll progress bar — always visible */}
+      {!isSystemRoute && <ScrollProgressBar />}
 
-      {!isSystemRoute && <Navbar dark={dark} setDark={setDark} user={user} />}
+      {/* Floating back to top */}
+      {!isSystemRoute && <BackToTop />}
+
+      {!isSystemRoute && (
+        <Navbar dark={dark} setDark={setDark} user={user} />
+      )}
 
       <main
         className={
           isSystemRoute
             ? "min-h-screen bg-gray-100 dark:bg-gray-900"
-            : "pt-20 overflow-x-hidden overflow-y-visible"
+            : "pt-20 overflow-x-hidden"
         }
       >
         <AnimatedRoutes user={user} />

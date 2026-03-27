@@ -177,10 +177,11 @@ const AssignCrewModal = ({ open, project, onClose, onAssigned }) => {
 
             {/* ✅ ACTION */}
             <GradientButton
-              text={loading ? "Assigning..." : "Assign Work"}
               onClick={handleAssign}
               disabled={loading || crewmates.length === 0}
-            />
+            >
+              {loading ? "Assigning..." : "Assign Work"}
+            </GradientButton>
           </motion.div>
         </motion.div>
       )}

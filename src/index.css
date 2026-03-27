@@ -11,18 +11,6 @@ html {
 }
 
 /* ==================================
-   FORCE HIDE SYSTEM CURSOR
-   (Desktop only – fixes double cursor)
-================================== */
-@media (hover: hover) and (pointer: fine) {
-  html,
-  body,
-  * {
-    cursor: none !important;
-  }
-}
-
-/* ==================================
    RGB CARD BORDER SYSTEM (HOVER)
 ================================== */
 
@@ -53,7 +41,6 @@ html {
 
   padding: 1px;
 
-  /* Mask: show border only */
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -68,19 +55,13 @@ html {
   opacity: 1;
 }
 
-/* RGB animation */
 @keyframes rgbFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 300% 50%;
-  }
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
 }
 
 /* ==================================
-   RGB CIRCULAR AVATAR (ALWAYS ON)
-   (NO MASK = NO BUGS)
+   RGB CIRCULAR AVATAR
 ================================== */
 
 .rgb-avatar {
@@ -124,7 +105,7 @@ html {
 }
 
 /* ==================================
-   RESUME BUTTON SHIMMER EFFECT
+   RESUME BUTTON SHIMMER
 ================================== */
 
 .resume-btn {
@@ -152,4 +133,91 @@ html {
 
 .resume-btn:hover::after {
   left: 150%;
+}
+
+/* ==================================
+   SHIMMER SWEEP (CardFX hover enter)
+================================== */
+
+@keyframes shimmerSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+/* ==================================
+   FLOAT
+================================== */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ==================================
+   GRADIENT TEXT SHIFT
+================================== */
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-text {
+  background: linear-gradient(
+    270deg,
+    #6366f1,
+    #a855f7,
+    #22d3ee,
+    #ec4899,
+    #6366f1
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 5s ease infinite;
+}
+
+/* ==================================
+   TEXT GLOW PULSE
+================================== */
+
+@keyframes textGlow {
+  0%, 100% { text-shadow: 0 0 8px rgba(99,102,241,0.4); }
+  50%       { text-shadow: 0 0 24px rgba(99,102,241,0.9), 0 0 48px rgba(34,211,238,0.4); }
+}
+
+.animate-text-glow {
+  animation: textGlow 3s ease-in-out infinite;
+}
+
+/* ==================================
+   BORDER GLOW PULSE
+================================== */
+
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(99,102,241,0.3); }
+  50%       { box-shadow: 0 0 24px rgba(99,102,241,0.7), 0 0 48px rgba(34,211,238,0.3); }
+}
+
+.animate-border-glow {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+/* ==================================
+   SCROLL INDICATOR BOUNCE
+================================== */
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50%       { transform: translateY(8px); opacity: 0.4; }
+}
+
+.animate-scroll-bounce {
+  animation: scrollBounce 1.6s ease-in-out infinite;
 }

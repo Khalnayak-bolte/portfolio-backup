@@ -9,20 +9,16 @@ import GradientButton from "../components/GradientButton";
 const projects = [
   {
     title: "Attendance Management System",
-    short:
-      "Role-based attendance tracking system for admins and students.",
-    full:
-      "A full-stack attendance management system built with React and Firebase. Features include role-based authentication, subject-wise attendance tracking, CSV import for students, real-time attendance summaries, and optimized Firestore data structure for scalability.",
+    short: "Role-based attendance tracking system for admins and students.",
+    full: "A full-stack attendance management system built with React and Firebase. Features include role-based authentication, subject-wise attendance tracking, CSV import for students, real-time attendance summaries, and optimized Firestore data structure for scalability.",
     tech: ["React", "Firebase Auth", "Firestore", "Tailwind CSS"],
-    github: "https://github.com/your-username/attendance-management-system",
-    demo: "https://attendance-demo.com",
+    github: "https://github.com/Khalnayak-bolte/project-attendance",
+    demo: null,
   },
   {
     title: "Learning Management System (LMS)",
-    short:
-      "Full-stack LMS with authentication and course management.",
-    full:
-      "A complete Learning Management System developed using React, Node.js, Express, and Firebase. Features include role-based access for Admins, Instructors, and Students, secure authentication, course management, assignments, quizzes, notices, and file uploads.",
+    short: "Full-stack LMS with authentication, courses, and assignments.",
+    full: "A cyberpunk-themed full-stack LMS developed using React, Node.js, Express, and Firebase. Implemented role-based access for Admins, Instructors, and Students, secure authentication, course management, assignments, quizzes, notices, and file uploads with scalable backend architecture.",
     tech: [
       "React",
       "Node.js",
@@ -31,28 +27,32 @@ const projects = [
       "Firestore",
       "Firebase Storage",
     ],
-    github: "https://github.com/your-username/lms-platform",
-    demo: "https://lms-demo.com",
+    github: "https://github.com/Khalnayak-bolte/lms-frontend",
+    demo: null,
+  },
+  {
+    title: "Quizzers",
+    short: "Interactive quiz application with real-time data.",
+    full: "A quiz application built using Flutter and Firebase, featuring secure authentication, real-time quiz data, structured Firestore database design, and a responsive Material UI. Focused on performance, scalability, and smooth user experience.",
+    tech: ["Flutter", "Firebase Auth", "Firestore"],
+    github: "https://github.com/Khalnayak-bolte/Quizzers",
+    demo: null,
   },
   {
     title: "WorkZen (HR System)",
-    short:
-      "Employee management and HR system.",
-    full:
-      "A full-stack HR management system designed to handle employee records, authentication, attendance tracking, and reporting with structured backend workflows.",
+    short: "Employee management and HR system.",
+    full: "A full-stack HR management system designed to handle employee records, authentication, attendance tracking, and reporting with structured backend workflows.",
     tech: ["PHP", "MySQL", "Bootstrap"],
-    github: "https://github.com/your-username/workzen",
-    demo: "#",
+    github: "https://github.com/Khalnayak-bolte/WorkZen",
+    demo: null,
   },
   {
     title: "Portfolio Website",
-    short:
-      "Premium animated developer portfolio.",
-    full:
-      "A modern, animated portfolio built with React, Vite, Tailwind CSS, and Framer Motion. Includes dark/light mode, page transitions, RGB effects, custom cursor, and responsive layout.",
+    short: "Premium animated developer portfolio.",
+    full: "A modern, animated portfolio built with React, Vite, Tailwind CSS, and Framer Motion. Includes dark/light mode, page transitions, RGB effects, custom cursor, and responsive layout.",
     tech: ["React", "Vite", "Tailwind CSS", "Framer Motion"],
-    github: "https://github.com/your-username/portfolio",
-    demo: "#",
+    github: "https://github.com/Khalnayak-bolte/portfolio",
+    demo: "https://yash-portfolio-3115.web.app",
   },
 ];
 
@@ -73,7 +73,7 @@ const AllProjects = () => {
       animate="visible"
     >
       <div className="max-w-7xl mx-auto px-6">
-        {/* 🔙 BACK BUTTON */}
+        {/* BACK BUTTON */}
         <div className="mb-14">
           <GradientButton onClick={() => navigate(-1)}>
             ← Back
@@ -104,18 +104,14 @@ const AllProjects = () => {
                     {/* Content */}
                     <div
                       className="flex-1 cursor-pointer"
-                      onClick={() =>
-                        setActive(active === i ? null : i)
-                      }
+                      onClick={() => setActive(active === i ? null : i)}
                     >
                       <h3 className="text-xl font-semibold mb-2">
                         {project.title}
                       </h3>
 
                       <p className="text-gray-600 dark:text-gray-300">
-                        {active === i
-                          ? project.full
-                          : project.short}
+                        {active === i ? project.full : project.short}
                       </p>
 
                       {active === i && (
@@ -159,25 +155,27 @@ const AllProjects = () => {
                         GitHub
                       </motion.a>
 
-                      <motion.a
-                        href={project.demo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        variants={buttonAnim}
-                        whileHover="hover"
-                        whileTap="tap"
-                        transition={{
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 20,
-                        }}
-                        className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-semibold
-                        bg-indigo-600 text-white
-                        hover:bg-indigo-700
-                        dark:bg-indigo-500 dark:hover:bg-indigo-600 transition-colors"
-                      >
-                        Live Demo
-                      </motion.a>
+                      {project.demo && (
+                        <motion.a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variants={buttonAnim}
+                          whileHover="hover"
+                          whileTap="tap"
+                          transition={{
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 20,
+                          }}
+                          className="flex-1 text-center px-4 py-2 rounded-lg text-sm font-semibold
+                          bg-indigo-600 text-white
+                          hover:bg-indigo-700
+                          dark:bg-indigo-500 dark:hover:bg-indigo-600 transition-colors"
+                        >
+                          Live Demo
+                        </motion.a>
+                      )}
                     </div>
                   </div>
                 </CardFX>
